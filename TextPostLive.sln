@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextPostLive", "TextPostLive.csproj", "{BDBBB57B-CF7F-438B-A552-69B84609AA11}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BDBBB57B-CF7F-438B-A552-69B84609AA11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDBBB57B-CF7F-438B-A552-69B84609AA11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDBBB57B-CF7F-438B-A552-69B84609AA11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDBBB57B-CF7F-438B-A552-69B84609AA11}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EF41FA92-9E57-4DCE-BFDA-A2673B2B58B9}
+	EndGlobalSection
+EndGlobal

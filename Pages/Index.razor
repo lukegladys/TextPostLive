@@ -1,0 +1,86 @@
+﻿@page "/"
+@implements IAsyncDisposable
+@inject NavigationManager navigationManager
+@inject TextPostService textPostService
+@using Microsoft.AspNetCore.SignalR.Client
+@using TextPostLive.Data
+@using System.Timers
+
+<div id="postinput">
+    <input type="text" maxlength="100000" @bind-value="@_newPost" @bind-value:event="oninput" @onkeyup="@EnterAsync" />
+</div>
+
+<div id="scrollbox">
+    @foreach (var item in _posts)
+    {
+        <div class="post">@item</div>
+    }
+</div>
+
+@code {
+
+    // new post input
+    private string _newPost;
+    private string _keyPressed;
+
+    // list of posts on board
+    private List<string> _posts = new List<string>();
+
+    private string _hubUrl;
+    private HubConnection _hubConnection;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Get initial list from Redis
+        _posts = await textPostService.GetTextPostsAsync();
+
+        try
+        {
+            // Create the signalR client
+            string baseUrl = navigationManager.BaseUri;
+
+            _hubUrl = baseUrl.TrimEnd('/') + TextPostLiveHub.HubUrl;
+
+            _hubConnection = new HubConnectionBuilder()
+                .WithUrl(_hubUrl)
+                .Build();
+
+            _hubConnection.On<string>("Broadcast", BroadcastMessage);
+
+            await _hubConnection.StartAsync();
+        }
+        catch (Exception e)
+        {
+            Console.Write($"ERROR: Failed to start post client: {e.Message}");
+        }
+    }
+
+    private void BroadcastMessage(string message)
+    {
+        _posts.Insert(0, message);
+
+        // Inform blazor the UI needs updating
+        StateHasChanged();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_hubConnection is not null)
+        {
+            await _hubConnection.StopAsync();
+            await _hubConnection.DisposeAsync();
+        }
+    }
+
+    private async Task EnterAsync(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter" || e.Key == "NumpadEnter")
+        {
+            if (!string.IsNullOrWhiteSpace(_newPost))
+            {
+                await _hubConnection.SendAsync("Broadcast", _newPost);
+                _newPost = string.Empty;
+            }
+        }
+    }
+}
