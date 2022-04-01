@@ -23,6 +23,11 @@ builder.Services.AddStackExchangeRedisCache(option =>
     option.Configuration = builder.Configuration["CacheConnection"];
 });
 
+if (!builder.Environment.IsDevelopment())
+{
+    builder.Services.AddSignalR().AddAzureSignalR();
+}
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
