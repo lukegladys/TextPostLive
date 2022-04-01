@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.ResponseCompression;
 using StackExchange.Redis;
 using TextPostLive;
@@ -20,6 +18,10 @@ builder.Services.AddResponseCompression(opts =>
 // Redis
 var multiplexer = ConnectionMultiplexer.Connect(builder.Configuration["CacheConnection"]);
 builder.Services.AddSingleton<IConnectionMultiplexer>(multiplexer);
+builder.Services.AddStackExchangeRedisCache(option =>
+{
+    option.Configuration = builder.Configuration["CacheConnection"];
+});
 
 var app = builder.Build();
 

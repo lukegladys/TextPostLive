@@ -20,13 +20,13 @@
 @code {
 
     // new post input
-    private string _newPost;
-    private string _keyPressed;
+    private string _newPost = String.Empty;
+    private string _keyPressed = String.Empty;
 
     // list of posts on board
     private List<string> _posts = new List<string>();
 
-    private string _hubUrl;
+    private string _hubUrl = String.Empty;
     private HubConnection _hubConnection;
 
     protected override async Task OnInitializedAsync()
