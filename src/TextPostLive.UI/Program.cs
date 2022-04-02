@@ -1,26 +1,21 @@
 using Microsoft.AspNetCore.ResponseCompression;
-using StackExchange.Redis;
-using TextPostLive;
-using TextPostLive.Data;
+using TextPostLive.UI;
+using TextPostLive.Data.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add app services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<TextPostService>();
 builder.Services.AddResponseCompression(opts =>
 {
     opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
         new[] { "application/octet-stream" });
 });
 
-// Redis
-var multiplexer = ConnectionMultiplexer.Connect(builder.Configuration["CacheConnection"]);
-builder.Services.AddSingleton<IConnectionMultiplexer>(multiplexer);
-builder.Services.AddStackExchangeRedisCache(option =>
+builder.Services.AddHttpClient<TextPostServiceClient>(httpClient =>
 {
-    option.Configuration = builder.Configuration["CacheConnection"];
+    httpClient.BaseAddress = new Uri(builder.Configuration["TextPostLiveApiBaseAddress"]);
 });
 
 if (!builder.Environment.IsDevelopment())
