@@ -21,7 +21,7 @@ name: Build and deploy TextPostLive backend to Azure App Service
 
 env:
   AZURE_WEBAPP_NAME: text-post-live-backend    # set this to the name of your Azure Web App
-  AZURE_WEBAPP_PACKAGE_PATH: './src/TextPostLive.Api'      # set this to the path to your web app project, defaults to the repository root
+  AZURE_WEBAPP_PACKAGE_PATH: 'src/TextPostLive.Api'      # set this to the path to your web app project, defaults to the repository root
   DOTNET_VERSION: '6.0.x'                 # set this to the .NET Core version to use
 
 on:
@@ -83,4 +83,4 @@ jobs:
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.BACKEND_PUBLISH_PROFILE }}
-          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/myapp
