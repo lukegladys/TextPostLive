@@ -29,7 +29,7 @@ on:
     branches:
       - main
     paths:
-      - ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+      - 'src/TextPostLive.UI/**'
   workflow_dispatch:
 
 jobs:
