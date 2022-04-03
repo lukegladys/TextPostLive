@@ -17,11 +17,11 @@ builder.Services.AddResponseCompression(opts =>
 });
 
 // Redis
-var multiplexer = ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("RedisCache"));
+var multiplexer = ConnectionMultiplexer.Connect(builder.Configuration["CacheConnection"]);
 builder.Services.AddSingleton<IConnectionMultiplexer>(multiplexer);
 
 // Sql
-builder.Services.AddSqlServer<TextPostDbContext>(builder.Configuration.GetConnectionString("SqlServer"));
+builder.Services.AddSqlServer<TextPostDbContext>(builder.Configuration.GetConnectionString("AzureSql"));
 
 builder.Services.AddScoped<RedisTextPostRepository>();
 builder.Services.AddScoped<SqlTextPostRepository>();
@@ -32,11 +32,13 @@ if (!builder.Environment.IsDevelopment())
 {
     builder.Services.AddSignalR().AddAzureSignalR(options =>
     {
-        options.ConnectionString = builder.Configuration.GetConnectionString("AzureSignalR");
+        options.ConnectionString = builder.Configuration["Azure:SignalR:ConnectionString"];
         options.ServerStickyMode =
             Microsoft.Azure.SignalR.ServerStickyMode.Required;
     });
 }
+
+
 
 var app = builder.Build();
 
