@@ -27,7 +27,7 @@ builder.Services.AddScoped<SqlTextPostRepository>();
 builder.Services.AddScoped<TextPostService>();
 
 // SignalR
-builder.Services.AddSignalR();
+builder.Services.AddSignalR().AddAzureSignalR();
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
