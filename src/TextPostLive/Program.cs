@@ -17,12 +17,8 @@ builder.Services.AddResponseCompression(opts =>
 });
 
 // Redis
-var multiplexer = ConnectionMultiplexer.Connect(builder.Configuration["CacheConnection"]);
+var multiplexer = ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("RedisCache"));
 builder.Services.AddSingleton<IConnectionMultiplexer>(multiplexer);
-builder.Services.AddStackExchangeRedisCache(option =>
-{
-    option.Configuration = builder.Configuration["CacheConnection"];
-});
 
 // Sql
 builder.Services.AddSqlServer<TextPostDbContext>(builder.Configuration.GetConnectionString("SqlServer"));
