@@ -28,7 +28,11 @@ builder.Services.AddScoped<SqlTextPostRepository>();
 builder.Services.AddScoped<TextPostService>();
 
 // SignalR
-builder.Services.AddSignalR().AddAzureSignalR();
+builder.Services.AddSignalR();
+
+// Swagger
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
@@ -51,10 +55,11 @@ app.UseHttpsRedirection();
 app.MapGet("/api/posts", async (TextPostService service) =>
     await service.GetTextPostsAsync());
 
-app.MapPost("/api/newpost", async (TextPost post, TextPostService service) =>
+app.MapPost("/api/newpost", async (string post, TextPostService service) =>
 {
-    var textPost = await service.SaveTextPostAsync(post);
-    return Results.Created($"/api/posts", post);
+    var textPost = await service.CacheTextPostAsync(post);
+    await service.SaveTextPostAsync(textPost);
+    return Results.Created($"/api/posts", textPost);
 })
 .WithName("PostNewTextPost");
 
