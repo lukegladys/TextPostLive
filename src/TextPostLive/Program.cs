@@ -28,7 +28,7 @@ builder.Services.AddScoped<SqlTextPostRepository>();
 builder.Services.AddScoped<TextPostService>();
 
 // SignalR
-if (!builder.Environment.IsDevelopment())
+if (builder.Environment.IsProduction())
 {
     builder.Services.AddSignalR().AddAzureSignalR(options =>
     {
@@ -37,8 +37,6 @@ if (!builder.Environment.IsDevelopment())
             Microsoft.Azure.SignalR.ServerStickyMode.Required;
     });
 }
-
-
 
 var app = builder.Build();
 
