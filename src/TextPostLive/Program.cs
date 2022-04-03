@@ -30,7 +30,12 @@ builder.Services.AddScoped<TextPostService>();
 // SignalR
 if (!builder.Environment.IsDevelopment())
 {
-    builder.Services.AddSignalR().AddAzureSignalR();
+    builder.Services.AddSignalR().AddAzureSignalR(options =>
+    {
+        options.ConnectionString = builder.Configuration.GetConnectionString("AzureSignalR");
+        options.ServerStickyMode =
+            Microsoft.Azure.SignalR.ServerStickyMode.Required;
+    });
 }
 
 var app = builder.Build();
