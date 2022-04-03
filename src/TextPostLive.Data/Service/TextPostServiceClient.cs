@@ -29,7 +29,7 @@ public class TextPostServiceClient
     public async Task<TextPost> SaveTextPost(string post)
     {
         var newTextPost = new TextPost(post);
-        await _httpClient.PostAsJsonAsync("api/newpost", newTextPost);
+        await _httpClient.PostAsJsonAsync("api/newpost", newTextPost).ConfigureAwait(false);
 
         return newTextPost;
     }
