@@ -28,15 +28,7 @@ builder.Services.AddScoped<SqlTextPostRepository>();
 builder.Services.AddScoped<TextPostService>();
 
 // SignalR
-if (builder.Environment.IsProduction())
-{
-    builder.Services.AddSignalR().AddAzureSignalR(options =>
-    {
-        options.ConnectionString = builder.Configuration["Azure:SignalR:ConnectionString"];
-        options.ServerStickyMode =
-            Microsoft.Azure.SignalR.ServerStickyMode.Required;
-    });
-}
+builder.Services.AddSignalR().AddAzureSignalR();
 
 var app = builder.Build();
 
