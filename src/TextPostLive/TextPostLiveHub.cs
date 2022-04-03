@@ -7,17 +7,18 @@ namespace TextPostLive.UI;
 public class TextPostLiveHub : Hub
 {
     public const string HubUrl = "/post";
-    private readonly TextPostServiceClient _textPostService;
+    private readonly TextPostService _textPostService;
 
-    public TextPostLiveHub(TextPostServiceClient textPostService)
+    public TextPostLiveHub(TextPostService textPostService)
     {
         _textPostService = textPostService;
     }
 
     public async Task Broadcast(string message)
     {
-        var newTextPost = await _textPostService.SaveTextPost(message);
-        await Clients.All.SendAsync("Broadcast", newTextPost);
+        var newTextPost = await _textPostService.CacheTextPostAsync(message);
+        await Clients.All.SendAsync("Broadcast", message);
+        await _textPostService.SaveTextPostAsync(newTextPost);
     }
 
     public override Task OnConnectedAsync()

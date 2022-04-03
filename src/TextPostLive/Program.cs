@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.ResponseCompression;
 using TextPostLive.UI;
+using TextPostLive.Data.Repository;
+using StackExchange.Redis;
+using TextPostLive.Data.Model;
 using TextPostLive.Data.Service;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,11 +16,22 @@ builder.Services.AddResponseCompression(opts =>
         new[] { "application/octet-stream" });
 });
 
-builder.Services.AddHttpClient<TextPostServiceClient>(httpClient =>
+// Redis
+var multiplexer = ConnectionMultiplexer.Connect(builder.Configuration["CacheConnection"]);
+builder.Services.AddSingleton<IConnectionMultiplexer>(multiplexer);
+builder.Services.AddStackExchangeRedisCache(option =>
 {
-    httpClient.BaseAddress = new Uri(builder.Configuration["TextPostLiveApiBaseAddress"]);
+    option.Configuration = builder.Configuration["CacheConnection"];
 });
 
+// Sql
+builder.Services.AddSqlServer<TextPostDbContext>(builder.Configuration.GetConnectionString("SqlServer"));
+
+builder.Services.AddScoped<RedisTextPostRepository>();
+builder.Services.AddScoped<SqlTextPostRepository>();
+builder.Services.AddScoped<TextPostService>();
+
+// SignalR
 if (!builder.Environment.IsDevelopment())
 {
     builder.Services.AddSignalR().AddAzureSignalR();
@@ -31,9 +45,21 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
+
+app.MapGet("/api/posts", async (TextPostService service) =>
+    await service.GetTextPostsAsync());
+
+app.MapPost("/api/newpost", async (TextPost post, TextPostService service) =>
+{
+    var textPost = await service.SaveTextPostAsync(post);
+    return Results.Created($"/api/posts", post);
+})
+.WithName("PostNewTextPost");
 
 app.UseStaticFiles();
 

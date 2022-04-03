@@ -1,7 +1,7 @@
 ﻿@page "/"
 @implements IAsyncDisposable
 @inject NavigationManager navigationManager
-@inject TextPostServiceClient textPostService
+@inject TextPostService textPostService
 @using Microsoft.AspNetCore.SignalR.Client
 @using System.Timers
 @using TextPostLive.Data.Model
@@ -13,7 +13,7 @@
 <div id="scrollbox">
     @foreach (var item in _posts)
     {
-        <div class="post">@item.Post</div>
+        <div class="post">@item</div>
     }
 </div>
 
@@ -24,7 +24,7 @@
     private string _keyPressed = String.Empty;
 
     // list of posts on board
-    private List<TextPost> _posts = new List<TextPost>();
+    private List<string> _posts = new List<string>();
 
     private string _hubUrl = String.Empty;
     private HubConnection _hubConnection;
@@ -32,7 +32,7 @@
     protected override async Task OnInitializedAsync()
     {
         // Get initial list from API
-        var textPosts = await textPostService.GetTextPosts();
+        var textPosts = await textPostService.GetTextPostsAsync();
         if(textPosts != null)
         {
             _posts = textPosts.ToList();
@@ -49,7 +49,7 @@
                 .WithUrl(_hubUrl)
                 .Build();
 
-            _hubConnection.On<TextPost>("Broadcast", BroadcastMessage);
+            _hubConnection.On<string>("Broadcast", BroadcastMessage);
 
             await _hubConnection.StartAsync();
         }
@@ -59,7 +59,7 @@
         }
     }
 
-    private void BroadcastMessage(TextPost message)
+    private void BroadcastMessage(string message)
     {
         _posts.Insert(0, message);
 
