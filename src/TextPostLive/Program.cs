@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.ResponseCompression;
 using TextPostLive.UI;
 using TextPostLive.Data.Repository;
 using StackExchange.Redis;
-using TextPostLive.Data.Model;
 using TextPostLive.Data.Service;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -68,8 +67,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.MapBlazorHub();
-app.MapHub<TextPostLiveHub>(TextPostLiveHub.HubUrl);
-
 app.MapFallbackToPage("/_Host");
+app.MapHub<TextPostLiveHub>(TextPostLiveHub.HubUrl);
 
 app.Run();
